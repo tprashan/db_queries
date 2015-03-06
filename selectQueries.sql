@@ -186,4 +186,24 @@ select d.dept_name,e.gender ,max (e.salary) from employee e, department d
 
  select dept_name from department where not id in (select dept_id from employee);
 
- 
+ select dept_name from department where id not in (select dept_id from employee where dept_id is not null);
+
+select city,
+	case when city in('Tokyo','Toronto')
+	then 'Pune'
+	else 'No_change'
+	end New_City
+	from locations;
+-- ************************************* for male in lower and female in capital *******************************
+select gender,
+	case when gender in('F')
+	then upper(name)
+	else lower(name)
+	end name
+	from employee;
+
+-- ************************* for male in lower and female in capital using Decode*******************************
+SELECT id,gender,
+	DECODE(gender, 'F', UPPER(name),
+              'M', LOWER (name)) name
+FROM employee;
