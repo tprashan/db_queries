@@ -182,6 +182,7 @@ select d.dept_name,e.gender ,max (e.salary) from employee e, department d
  	where e.dept_id=d.id group by e.name,d.dept_name HAVING e.salary > avg(e.salary);
 
 -- ******************************************** In place of join ****************************
+--  inline views---------------------
  select dept_name from department where id in (select dept_id from employee);
 
  select dept_name from department where not id in (select dept_id from employee);
@@ -207,3 +208,26 @@ SELECT id,gender,
 	DECODE(gender, 'F', UPPER(name),
               'M', LOWER (name)) name
 FROM employee;
+
+-- *************************** get avg salary for each department *********************************
+--  ***************** in line view *****************************************
+select e.id,e.name,e.dept_id,e.salary,dpt.AVG_SALARY from employee e,
+(select dept_id,avg(e.salary) As AVG_SALARY from employee e where dept_id is not null group by dept_id)dpt
+where  e.dept_id = dpt.dept_id;
+
+-- *************************** Window function (Analytical Function)  *****************************
+
+select e.id,e.name,e.dept_id,e.salary,avg(e.salary) over (PARTITION by dept_id) from employee e where dept_id is not null;
+select e.id,e.name,e.dept_id,e.salary,avg(e.salary) over (PARTITION by dept_id) from employee e;
+select e.id,e.name,e.dept_id,e.salary,avg(e.salary) over (PARTITION by gender) from employee e;
+
+-- ************************* Round a decimal place  ************************************************
+select e.id,e.name,e.dept_id,e.salary,round (dpt.AVG_SALARY,2) from employee e,
+(select dept_id,avg(e.salary) As AVG_SALARY from employee e where dept_id is not null group by dept_id)dpt
+where  e.dept_id = dpt.dept_id;
+
+ select round(avg(e.salary)) from employee e;
+  select round(avg(e.salary),2) from employee e;
+
+  -- ////////////////////////////// Scalar Query ///////////////////////////////////////////////////////////////////
+  select id,name,(select dept_name from department where employee.dept_id=department.id)dept_name from employee;
